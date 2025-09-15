@@ -4,33 +4,62 @@ import tracemalloc
 import time 
 import random
 
-##Función para dibujar el grafo
-# def graficar_grafo(grafo, nodo_raiz, nodo_solucion):
-#     G = nx.Graph()
-#     ##Recorrer todos los nodos e ir añadiendo rayas
-#     ##entre cada nodo
-#     for nodo,hijos in grafo.items():
-#         for hijo in hijos:
-#             G.add_edge(nodo,hijo)
-        
-#     pos = nx.spring_layout(G)
+##FUNCIÓN PARA HACER EL LLENADO DE LAS POSICIONES
+def funcionLLenadoraDePosicionesBFS (grafo, nodo_raiz, nodo_solucion):
+    cola = [nodo_raiz]
+
+    nivel = {nodo_raiz: 0}
+
+    while len(cola) > 0 :
+        nodo_actual = cola.pop(0)
+        for vecino in grafo[nodo_actual]:
+            if vecino not in nivel:
+                nivel[vecino] = nivel[nodo_actual] + 1
+                cola.append(vecino)
+
+    niveles = {}
+    for nodo, profundida in nivel.items():
+        niveles.setdefault(profundida,[]).append(nodo)
+    pos = {}
+    for prof, nodos in niveles.items():
+        cantidad = len(nodos)
+        for i,nodo in enumerate(nodos):
+            offset = (cantidad - 1) / 2
+            x = i - offset 
+            y = -prof
+            pos[nodo] = (x,y)
+    return pos
+
+
+##FUNCIÓN DIBUJAR EL GRÁFO
+def graficar_grafo(grafo, nodo_raiz, nodo_solucion):
+    G = nx.Graph()
+    ##Recorrer todos los nodos e ir añadiendo rayas
+    ##entre cada nodo
+    for nodo,hijos in grafo.items():
+        #print(f"El padre {nodo}, tiene los hijos:")
+        for hijo in hijos:
+            G.add_edge(nodo,hijo)
+            #print(hijo)
     
-#     '''
-#     pos = {
-#         1: (0,0),
-#         2: (-1,-1),
-#         3: (1,-1),
-#         4: (-2,-2),
-#         5: (0,-2),
-#         6: (2,-2)
-#     }
-#     '''
+    pos = nx.spring_layout(G)
+        
+    pos = funcionLLenadoraDePosicionesBFS(grafo,nodo_raiz,nodo_solucion)
 
-#     nx.draw(G, pos, with_labels = True, node_color ='lightblue', node_size = 400, font_size = 11, font_weight = 'bold')
-#     plt.show()
+    colores = []
+    for nodo in G.nodes():
+        if nodo == nodo_solucion:
+            colores.append('#ff6666')
+        elif nodo == nodo_raiz:
+            colores.append('lightgreen')
+        else:
+            colores.append('lightblue')
 
 
-## Definir funcion ara el DFS
+    nx.draw(G, pos, with_labels = True, node_color=colores, node_size = 400, font_size = 11, font_weight = 'bold')
+    plt.show()
+
+## Definir funcion para el DFS 
 def dfs(grafo, nodo_raiz, nodo_solucion):
     ## Medir consumo de memoria 
     tracemalloc.start()
@@ -76,10 +105,8 @@ def dfs(grafo, nodo_raiz, nodo_solucion):
     
     print(f"El tiempo de ejecucion fue de: {tiempo_final - tiempo_inicial} segundos")
     print(f"La memoria actual consumida es de: {actual/10**6} y la memoria pico es de {pico/10**6}")    
-        
-        
-## Definimos el grafo      
 
+nodo_raiz = int(input("Ingrega un nodo raiz: "))
 
 grafo = {
     0 : [1,2,3],
@@ -93,9 +120,10 @@ grafo = {
     8 : [3,9],
     9 : [8],
     10 :[5]
-}        
+}  
 
-nodo_solucion = random.randint(0,len(grafo)-1)
-print(f"La meta es el nodo: {nodo_solucion}")
-dfs(grafo,0,nodo_solucion)
-##graficar_grafo(grafo,0,nodo_solucion)
+nodo_solucion = random.choice(list(grafo.keys()))
+print(f"El nodo solucion es: {nodo_solucion}")
+print("***Inicio de recorrido en profundidad***")
+dfs(grafo,nodo_raiz,nodo_solucion)
+graficar_grafo(grafo,nodo_raiz,nodo_solucion)

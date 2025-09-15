@@ -1,9 +1,11 @@
+import networkx as nx ##Uso y manejo de aristas y nodos
+import matplotlib.pyplot as plt
 import tracemalloc
 import time 
+import random
 
 ## Definir funcion ara el DFS
-
-def dfs(grafo, nodo_raiz):
+def dfs(grafo, nodo_raiz, nodo_solucion):
     ## Medir consumo de memoria 
     tracemalloc.start()
     ## Medir tiempo 
@@ -12,8 +14,8 @@ def dfs(grafo, nodo_raiz):
     pila = [nodo_raiz]
     ## Definir una lista para los visitados 
     visitados = [False]*len(grafo) ##************
-    
-    if nodo_raiz == True:
+
+    if nodo_raiz == nodo_solucion:
         print(f"Se encontro la solucion en el nodo {nodo_raiz}")
         return True
     
@@ -25,6 +27,10 @@ def dfs(grafo, nodo_raiz):
         ## Sacar el ultimo nodo que habia en la pila y lo guardamos en nodo_actual 
         nodo_actual = pila[-1]
         print(f"El nodo actual es: {nodo_actual}")
+        if nodo_actual == nodo_solucion:
+            print(f"Se encontro la solucion en el nodo {nodo_actual}")
+            return True
+        
         ## Eliminar el ultimo nodo de la pila 
         pila = pila[:-1]
         
@@ -60,4 +66,7 @@ grafo = {
     9 : [8],
     10 :[5]
 }        
-dfs(grafo,5)
+
+nodo_solucion = random.randint(0,len(grafo)-1)
+print(f"La meta es el nodo: {nodo_solucion}")
+dfs(grafo,0,nodo_solucion)

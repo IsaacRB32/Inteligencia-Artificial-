@@ -20,7 +20,6 @@ def graficar_grafo(grafo, nodo_raiz):
         5: (0,-2),
         6: (2,-2)
     }
-
     nx.draw(G, pos, with_labels = True, node_color ='lightblue', node_size = 400, font_size = 11, font_weight = 'bold')
     plt.show()
 
