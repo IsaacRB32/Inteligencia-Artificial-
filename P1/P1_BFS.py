@@ -112,6 +112,6 @@ grafo = {
 }  
 nodo_solucion = random.choice(list(grafo.keys()))
 print(f"El nodo solucion es: {nodo_solucion}")
-print("***Inicio de recorrido en profundidad***")
+print("***Inicio de recorrido en anchura***")
 BFS(grafo,nodo_raiz,nodo_solucion)
 graficar_grafo(grafo,nodo_raiz,nodo_solucion)

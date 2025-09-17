@@ -93,7 +93,7 @@ def dfs(grafo, nodo_raiz, nodo_solucion):
         for hijos in grafo[nodo_actual]:
             ## Preguntar si algunos de los hijos ya fue visitado 
             if visitados[hijos] == False:
-                visitados[hijos] = True   # ← antes tenías '==' en lugar de '='
+                visitados[hijos] = True
                 pila = pila + [hijos]
         ## Falta preguntar si la solucion esta o no en lagunos de los 
         ## nodos hijos o en el nodo actual 
