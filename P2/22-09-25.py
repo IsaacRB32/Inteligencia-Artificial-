@@ -83,10 +83,12 @@ def desplegar_laberinto (maze, camino, considerados):
         ##Este for regresa todas las posiciones almacenadas en considerados 
         for i in considerados:
             plt.plot(i[1],i[0],'o', color = 'blue')
+            plt.pause(0.1)
     if camino:
         ##Este for regresa todas las posiciones almacenadas en considerados 
         for i in camino:
             plt.plot(i[1],i[0],'o', color = 'red')
+            plt.pause(0.1)
     plt.show()
 
 
