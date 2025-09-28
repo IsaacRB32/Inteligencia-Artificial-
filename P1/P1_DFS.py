@@ -5,7 +5,7 @@ import time
 import random
 
 ##FUNCIÓN PARA HACER EL LLENADO DE LAS POSICIONES
-def funcionLLenadoraDePosicionesBFS (grafo, nodo_raiz, nodo_solucion):
+def funcionLLenadoraDePosicionesBFS (grafo, nodo_raiz):
     cola = [nodo_raiz]
 
     nivel = {nodo_raiz: 0}
@@ -44,7 +44,7 @@ def graficar_grafo(grafo, nodo_raiz, nodo_solucion):
     
     pos = nx.spring_layout(G)
         
-    pos = funcionLLenadoraDePosicionesBFS(grafo,nodo_raiz,nodo_solucion)
+    pos = funcionLLenadoraDePosicionesBFS(grafo,nodo_raiz)
 
     colores = []
     for nodo in G.nodes():
@@ -55,7 +55,7 @@ def graficar_grafo(grafo, nodo_raiz, nodo_solucion):
         else:
             colores.append('lightblue')
 
-
+    print(G.nodes())
     nx.draw(G, pos, with_labels = True, node_color=colores, node_size = 400, font_size = 11, font_weight = 'bold')
     plt.show()
 
@@ -106,8 +106,6 @@ def dfs(grafo, nodo_raiz, nodo_solucion):
     print(f"El tiempo de ejecucion fue de: {tiempo_final - tiempo_inicial} segundos")
     print(f"La memoria actual consumida es de: {actual/10**6} y la memoria pico es de {pico/10**6}")    
 
-nodo_raiz = int(input("Ingrega un nodo raiz: "))
-
 grafo = {
     0 : [1,2,3],
     1 : [0,4,5],
@@ -121,8 +119,9 @@ grafo = {
     9 : [8],
     10 :[5]
 }  
-
+nodo_raiz = random.choice(list(grafo.keys()))
 nodo_solucion = random.choice(list(grafo.keys()))
+print(f"El nodo raiz es: {nodo_raiz}")
 print(f"El nodo solucion es: {nodo_solucion}")
 print("***Inicio de recorrido en profundidad***")
 dfs(grafo,nodo_raiz,nodo_solucion)

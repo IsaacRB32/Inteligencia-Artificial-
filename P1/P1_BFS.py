@@ -5,7 +5,7 @@ import time
 import random
 
 ##FUNCIÓN PARA HACER EL LLENADO DE LAS POSICIONES
-def funcionLLenadoraDePosicionesBFS (grafo, nodo_raiz, nodo_solucion):
+def funcionLLenadoraDePosicionesBFS (grafo, nodo_raiz):
     cola = [nodo_raiz]
 
     nivel = {nodo_raiz: 0}
@@ -16,12 +16,11 @@ def funcionLLenadoraDePosicionesBFS (grafo, nodo_raiz, nodo_solucion):
             if vecino not in nivel:
                 nivel[vecino] = nivel[nodo_actual] + 1
                 cola.append(vecino)
-
     niveles = {}
     for nodo, profundida in nivel.items():
         niveles.setdefault(profundida,[]).append(nodo)
     pos = {}
-    for prof, nodos in niveles.items():
+    for prof, nodos in niveles.items(): 
         cantidad = len(nodos)
         for i,nodo in enumerate(nodos):
             offset = (cantidad - 1) / 2
@@ -43,7 +42,7 @@ def graficar_grafo(grafo, nodo_raiz, nodo_solucion):
     
     pos = nx.spring_layout(G)
         
-    pos = funcionLLenadoraDePosicionesBFS(grafo,nodo_raiz,nodo_solucion)
+    pos = funcionLLenadoraDePosicionesBFS(grafo,nodo_raiz)
 
     colores = []
     for nodo in G.nodes():
@@ -57,7 +56,7 @@ def graficar_grafo(grafo, nodo_raiz, nodo_solucion):
     nx.draw(G, pos, with_labels = True, node_color=colores, node_size = 400, font_size = 11, font_weight = 'bold')
     plt.show()
 
-
+## Definir funcion para el BFS 
 def BFS (grafo, nodo_raiz, nodo_solucion):
     ## Medir consumo de memoria 
     tracemalloc.start()
@@ -95,8 +94,6 @@ def BFS (grafo, nodo_raiz, nodo_solucion):
     print(f"La memoria actual consumida es de: {actual/10**6} y la memoria pico es de {pico/10**6}")
     return False
         
-nodo_raiz = int(input("Ingrega un nodo raiz: "))
-
 grafo = {
     0 : [1,2,3],
     1 : [0,4,5],
@@ -110,7 +107,9 @@ grafo = {
     9 : [8],
     10 :[5]
 }  
+nodo_raiz = random.choice(list(grafo.keys()))
 nodo_solucion = random.choice(list(grafo.keys()))
+print(f"El nodo raiz es: {nodo_raiz}")
 print(f"El nodo solucion es: {nodo_solucion}")
 print("***Inicio de recorrido en anchura***")
 BFS(grafo,nodo_raiz,nodo_solucion)
