@@ -48,9 +48,9 @@ maze = np.array([
 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ])
 colores = ['white', 'black', 'lightgreen', 'lightblue']
-# Índices: 0=camino, 1=pared, 2=verde (pasto - medio), 3=azul (agua - difícil)
-cmap_personalizado = ListedColormap(colores)
 
+cmap_personalizado = ListedColormap(colores)
+        
 print(maze)
 # Costos base según terreno
 costo_terreno = {
@@ -173,7 +173,6 @@ def A_estrella_nueva(mapa, punto_inicial, meta):
         ## guardar en considerados el nodo actual
         considerados += [nodo_actual]
 
-
         ##Evaluamos si es la meta
         if nodo_actual == meta:
             tiempo_final = time.time()
@@ -194,6 +193,8 @@ def A_estrella_nueva(mapa, punto_inicial, meta):
                 #     g_nuevo = g_actual + 10
                 ##Vamos a cambiar la métrica de medición de g, pasando de L2 a L3
                 # Costos base según terreno
+                ##Ya no es necesario hacer uso de in if para separar movimientos ortogonales y diagonales, porque la raíz ya lo hace
+                ##Te lo dice la variable 'distancia'
                 tipo = mapa[vecino[0], vecino[1]]
                 distancia = (abs(vecinos[0])**3 + abs(vecinos[1])**3)**(1/3)
                 g_nuevo = g_actual + costo_terreno[tipo]*distancia
@@ -258,7 +259,7 @@ def Dijkstra (mapa, punto_inicial, meta):
                 distancia = (abs(vecinos[0])**2 + abs(vecinos[1])**2)**(1/2)
                 g_nuevo = g_actual + costo_terreno[tipo]*distancia
                 f_nuevo = g_nuevo
-            ##verificar si el vecino    ya está en la lista abierta
+            ##verificar si el vecino ya está en la lista abierta
                 banderita_lista_abierta = False
                 for nodo, g, f, camino_tmp in lista_abierta:
                     if nodo == vecino and f <= f_nuevo:
@@ -343,7 +344,7 @@ while True :
 
     lienzo, axes = plt.subplots(1, 3, figsize=(10, 5))
     
-    lienzo.suptitle("Comparacion A*")
+    lienzo.suptitle("Comparacion entre A*-Original, A*-Nuevo y Dijkstra")
 
     ##Le mandamos el segundo axes a bfs
     #camino_estrella, considerados_estrella, tiempo_estrella, memoria_estrella  = A_estrella(maze, punto_inicial, meta)
