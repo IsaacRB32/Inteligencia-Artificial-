@@ -21,7 +21,6 @@ def jugada (jugadorA, jugadorB, reglas_juego, signals):
         return "Empate"
     
     vencedoresA = reglas_juego[jugadorA][1]
-    vencedoresB = reglas_juego[jugadorB][1]
 
     if (signalB in vencedoresA):
         return "Ganaste"

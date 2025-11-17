@@ -100,7 +100,7 @@ def regresion_ride(X, Yr, lr, T, epsilon, epocas_max):
         b0 = b0 - Gradiente
         ## Ajusta la inclinación 
         Penalizacion_Ride = T * b1
-        b1 = b1 - (lr/m) * np.dot((Ym - Yr), X) + Penalizacion_Ride
+        b1 = b1 - (lr/m) * np.dot((Ym - Yr), X) + T * b1
         epochs += 1
 
         print(f"Época Número: {epochs}")
@@ -144,8 +144,27 @@ plt.ylabel("Y_m")
 plt.grid(True)
 plt.show()
 
-### Fase de operación
+### Fase de operación (Modificada para incluir Meses)
 
-X_test = float(input("¿Cuál año te gustaría predecir?: "))
-Ym_test = B0 + B1*X_test
-print(f"La prediccion para el año {X_test} es: {Ym_test}")
+anio = input("Ingrese el año que desea predecir (ej. 2026): ")
+mes = input("Ingrese el número del mes (1=Enero, 12=Diciembre): ")
+
+X_anio = int(anio)
+X_mes = int(mes)
+
+if X_mes < 1 or X_mes > 12:
+    raise ValueError("El numero de mes debe estar entre 1 y 12.")
+    
+## Contamos que el mes esta al incio por eso el -1
+X_fraction = (X_mes - 1) / 12
+
+## El anio más los decimales de mes
+X_test = X_anio + X_fraction
+
+## Se hace la predicción
+Ym_test = B0 + B1 * X_test
+
+print("\n---* Resultado de la Prediccion *---")
+print(f"Prediccion para: {X_anio}, Mes {X_mes}")
+print(f"El modelo usa el valor de tiempo: {X_test:.4f}")
+print(f"La predicción de ventas para esa fecha es de: {Ym_test:.4f} millones de USD.")
