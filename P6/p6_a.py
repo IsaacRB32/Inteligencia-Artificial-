@@ -100,7 +100,7 @@ def regresion_ride(X, Yr, lr, T, epsilon, epocas_max):
         b0 = b0 - Gradiente
         ## Ajusta la inclinación 
         Penalizacion_Ride = T * b1
-        b1 = b1 - (lr/m) * np.dot((Ym - Yr), X) + T * b1
+        b1 = b1 - ((lr/m) * np.dot((Ym - Yr), X) + T * b1)
         epochs += 1
 
         print(f"Época Número: {epochs}")
