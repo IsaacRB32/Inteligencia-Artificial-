@@ -6,44 +6,23 @@ from mpl_toolkits.mplot3d import Axes3D
 from collections import Counter
 from sklearn.metrics import accuracy_score
 
+## Craga el dataset
 iris = load_iris()
 
+## El dataset de Iiris no viene con DataFrame
+## Creamos el DataFrame
+## iris.data = 150 filas x 4 columnas, iris.feature_names = los nombres de las columnas
 df = pd.DataFrame(iris.data, columns=iris.feature_names)
 
-df["target"] = iris.target
+## Nueva columna al DataFrame
+df["clase_real"] = iris.target
 
 data_points = df[["sepal length (cm)","petal length (cm)","petal width (cm)"]].values 
 
-# Normalización 
+cluster_reales = df["clase_real"].values
+
+# Normalizacion 
 data_points = (data_points - data_points.mean(axis=0)) / data_points.std(axis=0)
-
-labels_reales = df["target"].values
-
-def plot_clusters_3d(data, clusters, centroids):
-    fig = plt.figure(figsize=(10,7))
-    ax = fig.add_subplot(111, projection='3d')
-
-    colors = ['red', 'blue', 'green', 'purple']
-
-    for cluster_index in range(len(clusters)):
-        x = [p[0] for p in clusters[cluster_index]]
-        y = [p[1] for p in clusters[cluster_index]]
-        z = [p[2] for p in clusters[cluster_index]]
-        ax.scatter(x, y, z, color=colors[cluster_index], label=f'Cluster {cluster_index + 1}')
-
-    # Centroides
-    cx = [c[0] for c in centroids]
-    cy = [c[1] for c in centroids]
-    cz = [c[2] for c in centroids]
-    ax.scatter(cx, cy, cz, color="black", marker="x", s=120, label="Centroids")
-
-    ax.set_xlabel("sepal length (std)")
-    ax.set_ylabel("petal length (std)")
-    ax.set_zlabel("petal width (std)")
-    ax.set_title("K-means Clustering (3D)")
-    ax.legend()
-    plt.show()
-
 
 # Función para graficar los resultados
 def plot_clusters(data, clusters, centroids):
@@ -154,31 +133,31 @@ def kmeans(data, k, epocas=100):
 
 k = 3
 centroids, clusters, cluster_predicho = kmeans(data_points, k)
-
 plot_clusters(data_points, clusters, centroids)
-plot_clusters_3d(data_points, clusters, centroids)
 
 # Convertir clusters predichos en arreglo NumPy
-pred = np.array(cluster_predicho)
+cluster_predicho = np.array(cluster_predicho)
 
-# Crear un mapeo cluster → clase real
-cluster_to_class = {}
+## Buscamos un dicc. para clasificas de esta forma {0: 1, 1: 0, 2: 2}, el cluster 0 contiene principalmente la clase 1
+cluster_para_clases = {}
 
+## Iteramos sobre los 3  k
 for cluster_id in range(k):
-    clases_en_cluster = labels_reales[pred == cluster_id]
+    ## Estamos en el cluster actual
+    clases_en_cluster = cluster_reales[cluster_predicho == cluster_id]
     
     if len(clases_en_cluster) == 0:
         continue
     
     # Elegir la clase real más común en ese cluster
     clase_mas_frecuente = Counter(clases_en_cluster).most_common(1)[0][0]
-    cluster_to_class[cluster_id] = clase_mas_frecuente
+    cluster_para_clases[cluster_id] = clase_mas_frecuente
 
 # Convertir predicciones de clusters a clases reales
-predicciones_finales = np.array([cluster_to_class[c] for c in pred])
+predicciones_finales = np.array([cluster_para_clases[c] for c in cluster_predicho])
 
 # Accuracy
-accuracy = accuracy_score(labels_reales, predicciones_finales)
+aproximado = accuracy_score(cluster_reales, predicciones_finales)
 
-print("Mapeo cluster → clase real:", cluster_to_class)
-print("Accuracy del K-means:", accuracy)
+print("clase real:", cluster_para_clases)
+print("aproxmado del K-means:", aproximado)

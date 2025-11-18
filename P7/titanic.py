@@ -16,7 +16,7 @@ df["sex"] = df["sex"].map({"male":0, "female":1})
 data_points = df[["age", "fare", "pclass", "sex"]].values
 
 # Guardar los valores reales de supervivencia 
-supervivientes_reales = df["survived"].values
+closuter_reales = df["survived"].values
 
 ## Normalizacion
             ## Valor original - el promedio de cada colum / desviación estandar de cada colum.
@@ -141,11 +141,11 @@ plot_clusters(data_points, clusters, centroids)
 ## COMPARACIÓN CON LAS REALES
 
 cluster_predicho = np.array(cluster_predicho)
-supervivientes_reales = np.array(supervivientes_reales)
+closuter_reales = np.array(closuter_reales)
 
 
-aproximado_sin_invertir = np.mean(cluster_predicho == supervivientes_reales)
-aproximado_invertido = np.mean((1 - cluster_predicho) == supervivientes_reales)
+aproximado_sin_invertir = np.mean(cluster_predicho == closuter_reales)
+aproximado_invertido = np.mean((1 - cluster_predicho) == closuter_reales)
 
 print("\nExactitud sin invertir clusters:", aproximado_sin_invertir)
 print("Exactitud invirtiendo clusters:", aproximado_invertido)
@@ -157,4 +157,4 @@ else:
     print("\nEl cluster NO debe invertirse (0=Vivio, 1=Murio)")
     cluster_final = cluster_predicho
 
-print("\nExactitud final:", np.mean(cluster_final == supervivientes_reales))
+print("\nExactitud final:", np.mean(cluster_final == closuter_reales))
