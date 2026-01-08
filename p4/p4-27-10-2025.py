@@ -200,7 +200,7 @@ def A_estrella_nueva(mapa, punto_inicial, meta):
                 g_nuevo = g_actual + costo_terreno[tipo]*distancia
                 f_nuevo = g_nuevo + heuristica_nueva(vecino, meta)
             ##verificar si el vecino    ya está en la lista abierta
-                banderita_lista_abierta = False
+                banderita_lista_abierta = False 
                 for nodo, g, f, camino_tmp in lista_abierta:
                     if nodo == vecino and f <= f_nuevo:
                         banderita_lista_abierta = True
