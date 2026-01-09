@@ -7,27 +7,27 @@ A = np.array([
  [1,1,0,0,0,0,0,1,1,0],
  [1,1,0,0,0,0,0,1,1,0],
  [1,1,1,1,1,1,1,1,1,0],
- [1,1,0,0,0,0,0,1,1,0],
- [1,1,0,0,0,0,0,1,1,0],
- [1,1,0,0,0,0,0,1,1,0],
- [1,1,0,0,0,0,0,1,1,0],
- [0,0,0,0,0,0,0,0,0,0],
-], dtype=int)
+ [1,1,0,0,0,0,0,0,0,0],
+ [1,1,0,0,0,0,0,0,0,0],
+ [0,1,1,0,0,0,0,1,1,0],
+ [0,0,1,1,1,1,1,1,1,0],
+ [0,0,0,1,1,1,1,0,0,0],
+])
 
 Ximg = np.array([
- [1,0,0,0,0,0,0,0,0,1],
- [0,1,0,0,0,0,0,0,1,0],
- [0,0,1,0,0,0,0,1,0,0],
- [0,0,0,1,0,0,1,0,0,0],
+ [0,0,1,1,1,1,1,1,0,0],
+ [1,1,1,1,1,1,1,1,1,0],
+ [1,1,0,0,0,0,0,0,1,1],
+ [1,1,0,0,0,0,0,0,1,1],
+ [0,0,0,0,0,0,0,1,1,0],
+ [0,0,0,0,0,0,1,1,0,0],
+ [0,0,0,0,0,1,1,0,0,0],
  [0,0,0,0,1,1,0,0,0,0],
- [0,0,0,0,1,1,0,0,0,0],
- [0,0,0,1,0,0,1,0,0,0],
- [0,0,1,0,0,0,0,1,0,0],
- [0,1,0,0,0,0,0,0,1,0],
- [1,0,0,0,0,0,0,0,0,1],
-], dtype=int)
+ [0,0,0,1,1,1,1,1,1,1],
+ [0,0,1,1,1,1,1,1,1,1],
+])
 
-delta = 0.4
+delta = 0.04
 X0 = 1
 it = 0
 ECM = 10
@@ -134,9 +134,8 @@ while (ECM >= 0.2 and epoca <= epocas):
             W_salida = W_salida + delta * error_actual * y_entrada
             W0_salida = W0_salida + delta * error_actual
 
-            error_hacia_atras = error_actual * W_salida.T
-            W_entrada = W_entrada + delta * np.outer(X[j, :], error_hacia_atras)
-            W0_entrada = W0_entrada + delta * error_hacia_atras.T
+            W_entrada = W_entrada + delta * np.outer(X[j, :], error_actual)
+            W0_entrada = W0_entrada + delta * error_actual
 
     ECM = (1/2) * np.sum((Yd - Yobt) ** 2)
 
@@ -157,7 +156,7 @@ plt.ylabel('Error')
 plt.grid(True)
 plt.show()
 
-
+##FASE DE OPOERACION 
 np.random.seed(1)
 A11, A22, A33, A44, A55 = A, agregar_ruido_propio(A, 0.05), agregar_ruido_propio(A, 0.1), agregar_ruido_propio(A, 0.15), agregar_ruido_propio(A, 0.2)
 X11, X22, X33, X44, X55 = Ximg, agregar_ruido_propio(Ximg, 0.05), agregar_ruido_propio(Ximg, 0.1), agregar_ruido_propio(Ximg, 0.15), agregar_ruido_propio(Ximg, 0.20)
