@@ -14,7 +14,7 @@ A = np.array([
  [0,0,0,1,1,1,1,0,0,0],
 ])
 
-Ximg = np.array([
+X = np.array([
  [0,0,1,1,1,1,1,1,0,0],
  [1,1,1,1,1,1,1,1,1,0],
  [1,1,0,0,0,0,0,0,1,1],
@@ -27,12 +27,6 @@ Ximg = np.array([
  [0,0,1,1,1,1,1,1,1,1],
 ])
 
-delta = 0.04
-X0 = 1
-it = 0
-ECM = 10
-epocas = 50
-epoca = 0
 
 def agregar_ruido_propio(patron, prob_ruido=0.1):
     ruidoso = patron.copy()
@@ -59,134 +53,113 @@ def agregar_ruido_propio(patron, prob_ruido=0.1):
 
     ## Corrimiento pequeño
     if np.random.rand() < prob_ruido:
-        dy = np.random.randint(-1, 2)  ## -1,0,1
+        dy = np.random.randint(-1, 2)  # -1,0,1
         dx = np.random.randint(-1, 2)
         ruidoso = np.roll(ruidoso, shift=(dy, dx), axis=(0, 1))
 
     return ruidoso
 
+
 np.random.seed(0)
-A1, A2, A3, A4, A5 = A, agregar_ruido_propio(A, 0.1), agregar_ruido_propio(A, 0.15), agregar_ruido_propio(A, 0.2), agregar_ruido_propio(A, 0.25)
-X1, X2, X3, X4, X5 = Ximg, agregar_ruido_propio(Ximg, 0.1), agregar_ruido_propio(Ximg, 0.15), agregar_ruido_propio(Ximg, 0.2), agregar_ruido_propio(Ximg, 0.2)
+A1, A2, A3, A4, A5 = A, agregar_ruido_propio(A, 0.05), agregar_ruido_propio(A, 0.1), agregar_ruido_propio(A, 0.15), agregar_ruido_propio(A, 0.2)
+X1, X2, X3, X4, X5 = X, agregar_ruido_propio(X, 0.05), agregar_ruido_propio(X, 0.1), agregar_ruido_propio(X, 0.15), agregar_ruido_propio(X, 0.20)
+
+fig, axs = plt.subplots(2, 5, figsize=(10, 7))
+fig.suptitle("Patrones de entrenamiento (A y X con ruido propio)", fontsize=14)
 
 patrones = [A1, A2, A3, A4, A5, X1, X2, X3, X4, X5]
 titulos = [
     "A original", "A ruido 5%", "A ruido 10%", "A ruido 15%", "A ruido 20%",
     "X original", "X ruido 5%", "X ruido 10%", "X ruido 15%",  "X ruido 20%"
 ]
-
-fig, axs = plt.subplots(2, 5, figsize=(10, 7))
-fig.suptitle("Patrones de entrenamiento (A y X) - Multicapa sin backprop", fontsize=14)
 for i, ax in enumerate(axs.flat):
     ax.imshow(patrones[i], cmap='binary')
     ax.set_title(titulos[i])
     ax.axis('off')
+
 plt.tight_layout()
 plt.show()
 
-
-n = A.size  # 100
-X = np.zeros((len(patrones), n), dtype=float)
+n = A.size
+matriz = np.zeros((len(patrones), n))
 for i in range(len(patrones)):
-    X[i, :] = patrones[i].flatten()
+    matriz[i] = np.array(patrones[i].flatten())
 
-Yd = np.array([1,1,1,1,1,0,0,0,0,0], dtype=float)
-Yobt = np.zeros(len(X), dtype=float)
+Yd = np.array([1,1,1,1,1,0,0,0,0,0])
 
-epoca_list = []
-error_list = []
+m = len(matriz)
+Yobt = np.zeros(m)
+lr = 0.1
+epoch_max = 1000
+ECM = []
 
-np.random.seed(40)
-
-
-neuronas_entrada = X.shape[1]
-neuronas_salida = 1
-
-W_entrada = -np.random.rand(neuronas_entrada, neuronas_entrada)
-W0_entrada = -1 * np.random.rand(1, neuronas_entrada)
-
-W_salida = -np.random.rand(neuronas_salida, neuronas_entrada)
-W0_salida = -1 * np.random.rand(1, neuronas_salida)
+np.random.seed(42)
+w0 = -np.random.rand()
+W = np.random.rand((n))
 
 def escalon(z):
- return np.where(z >=0,1,0)
+    if z > 0:
+        return 1
+    return 0
 
-def bipolar(z):
-  return np.where(z >=0,1,-1)
+epoch = 0
+J = 10
 
-def sigmoide(z):
-  return 1/(1+(np.exp(-z)))
+X_train = matriz
 
+while (epoch <= epoch_max and J > 0):
+    print(f"El número de época es: {epoch}")
+    J = (1/(2*m)) * np.sum((Yd - Yobt)**2)
+    ECM += [J]
 
-while (ECM >= 0.2 and epoca <= epocas):
+    for i in range(m):
+        print(f"Muestra: {i}")
+        z = w0 + np.sum(W * X_train[i, :])
+        Yobt[i] = escalon(z)
+        print(Yobt)
 
-    for j in range(0, X.shape[0]):
-        z_entrada = np.dot(W_entrada.T, X[j, :]) + W0_entrada * X0
-        y_entrada = sigmoide(z_entrada)
+        if Yobt[i] != Yd[i]:
+            w0 = w0 - (lr/m) * np.sum(Yobt - Yd)
+            W  = W  - (lr/m) * np.sum(Yobt - Yd) * X_train[i, :]
+            print(f"W0 = {w0} y W={W}")
 
-        z_salida = (np.dot(W_salida, y_entrada.T) + W0_salida * X0).item()
-        Yobt[j] = sigmoide(z_salida)
+    epoch = epoch + 1
 
-        if abs(Yd[j] - Yobt[j]) > 0.1:
-            error_actual = Yd[j] - Yobt[j]
-
-            # Ajuste salida
-            W_salida = W_salida + delta * error_actual * y_entrada
-            W0_salida = W0_salida + delta * error_actual
-
-            W_entrada = W_entrada + delta * np.outer(X[j, :], error_actual)
-            W0_entrada = W0_entrada + delta * error_actual
-
-    ECM = (1/2) * np.sum((Yd - Yobt) ** 2)
-
-    print(ECM)
-    it += 1
-    epoca_list.append(it)
-    error_list.append(ECM)
-    epoca = epoca + 1
-    print("Epoca:", epoca)
-    print("Y obt de la epoca:", Yobt)
-
-print("Y obt final:", Yobt)
-
-plt.plot(epoca_list, error_list, marker='o')
-plt.title('Error durante las épocas (Multicapa sin backprop)')
-plt.xlabel('Época')
-plt.ylabel('Error')
+plt.figure()
+plt.plot(ECM)
+plt.title("ECM (Perceptrón)")
+plt.xlabel("Época")
+plt.ylabel("Error")
 plt.grid(True)
 plt.show()
 
-##FASE DE OPOERACION 
 np.random.seed(1)
 A11, A22, A33, A44, A55 = A, agregar_ruido_propio(A, 0.05), agregar_ruido_propio(A, 0.1), agregar_ruido_propio(A, 0.15), agregar_ruido_propio(A, 0.2)
-X11, X22, X33, X44, X55 = Ximg, agregar_ruido_propio(Ximg, 0.05), agregar_ruido_propio(Ximg, 0.1), agregar_ruido_propio(Ximg, 0.15), agregar_ruido_propio(Ximg, 0.20)
-
-patrones_test = [A11, A22, A33, A44, A55, X11, X22, X33, X44, X55]
+X11, X22, X33, X44, X55 = X, agregar_ruido_propio(X, 0.05), agregar_ruido_propio(X, 0.1), agregar_ruido_propio(X, 0.15), agregar_ruido_propio(X, 0.20)
 
 fig, axs = plt.subplots(2, 5, figsize=(10, 7))
-fig.suptitle("Patrones de test (A y X) - Multicapa sin backprop", fontsize=14)
+fig.suptitle("Patrones de test (A y X con ruido propio)", fontsize=14)
+
+patrones_test = [A11, A22, A33, A44, A55, X11, X22, X33, X44, X55]
 for i, ax in enumerate(axs.flat):
     ax.imshow(patrones_test[i], cmap='binary')
     ax.set_title(titulos[i])
     ax.axis('off')
+
 plt.tight_layout()
 plt.show()
 
-X_test = np.zeros((len(patrones_test), n), dtype=float)
+matriz_test = np.zeros((len(patrones_test), n))
 for i in range(len(patrones_test)):
-    X_test[i, :] = patrones_test[i].flatten()
+    matriz_test[i] = np.array(patrones_test[i].flatten())
 
-Yd_test = np.array([1,1,1,1,1,0,0,0,0,0], dtype=float)
-Yobt_test = np.zeros(len(X_test), dtype=float)
+Yobt_test = np.zeros(len(matriz_test))
+for i in range(len(matriz_test)):
+    z = w0 + np.sum(W * matriz_test[i, :])
+    Yobt_test[i] = escalon(z)
 
-for j in range(0, X_test.shape[0]):
-    z_entrada = np.dot(W_entrada.T, X_test[j, :]) + W0_entrada * X0
-    y_entrada = sigmoide(z_entrada)
-    z_salida = (np.dot(W_salida, y_entrada.T) + W0_salida * X0).item()
-    Yobt_test[j] = sigmoide(z_salida)
+print("Yobt_test:", Yobt_test)
 
-pred = (Yobt_test >= 0.5).astype(int)
-acc = np.mean(pred == Yd_test.astype(int))
-print("Yobt_test (sigmoide):", Yobt_test)
-print("Pred (>=0.5):", pred)
-print("Accuracy:", acc)
+Yd_test = np.array([1,1,1,1,1,0,0,0,0,0])
+acc = np.mean(Yobt_test.astype(int) == Yd_test)
+print(f"Exactitud de: {acc*100}%")
