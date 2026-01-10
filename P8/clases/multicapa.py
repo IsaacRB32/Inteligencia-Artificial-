@@ -64,26 +64,14 @@ while(ECM >= 0.2 and epoca<=epocas):
         ##Calcula su decisión final y aplica la sigmoide
         Yobt[j] = sigmoide(z_salida)
 
-        ##Compara con la realidad
-        # if (Yobt[j] != Yd[j]):
-        #   ##Está usando el Error Final (Yd - Yobt) para corregir directamente a la primera capa
-        #   W_entrada = W_entrada + delta*(Yd[j]-Yobt[j])*X[j,:]
-        #   W0_entrada = W0_entrada + delta*(Yd[j]-Yobt[j])
-        #   W_salida = W_salida + delta*(Yd[j]-Yobt[j])*y_entrada
-        #   W0_salida = W0_salida + delta*(Yd[j]-Yobt[j])
         if abs(Yd[j] - Yobt[j]) > 0.1: 
             error_actual = Yd[j] - Yobt[j]
             
-            # Ajuste de Salida: Usamos la entrada que llegó a esta capa (y_entrada)
             W_salida = W_salida + delta * error_actual * y_entrada
             W0_salida = W0_salida + delta * error_actual
             
-            # Ajuste de Entrada: Aquí está el truco "sin backprop"
-            # Como no usas derivadas, le pasas el error directamente 
-            # pero multiplicado por los pesos de salida para "orientar" la corrección.
-            error_hacia_atras = error_actual * W_salida.T
-            W_entrada = W_entrada + delta * np.outer(X[j,:], error_hacia_atras)
-            W0_entrada = W0_entrada + delta * error_hacia_atras.T
+            W_entrada = W_entrada + delta * np.outer(X[j,:], error_actual)
+            W0_entrada = W0_entrada + delta * error_actual.T
 
 
     ECM = (1/2)*np.sum((Yd-Yobt)**2)
