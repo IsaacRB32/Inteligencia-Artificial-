@@ -40,7 +40,7 @@ X_test  = X[test_idx] ##entradas nuevas para evaluar
 Y_test  = Y[test_idx] ##targets reales (one-hot) para comparar
 
 # ======================================
-# 2. VISUALIZACIÓN DE MUESTRAS (equivalente a tus patrones)
+# 2. VISUALIZACIÓN DE MUESTRAS
 # ======================================
 
 plt.figure(figsize=(10, 5))
@@ -56,7 +56,7 @@ plt.suptitle("Muestras del dataset Digits (8x8)")
 plt.show()
 
 # ======================================
-# 4. RED NEURONAL (3 CAPAS) (misma idea que tu base)
+# 4. RED NEURONAL (3 CAPAS) 
 # ======================================
 
 eta = 0.25
@@ -85,7 +85,7 @@ def d_sigmoide_z(z):
     return s*(1-s)
 
 # ======================================
-# 5. ENTRENAMIENTO (igual a tu base, pero con muchos datos)
+# 5. ENTRENAMIENTO 
 # ======================================
 
 errores = []
@@ -143,7 +143,7 @@ plt.grid()
 plt.show()
 
 # ======================================
-# 7. MAPAS DE ACTIVACIÓN (con tamaños ajustados)
+# 7. MAPAS DE ACTIVACIÓN 
 # ======================================
 
 def forward_map(x):
@@ -181,7 +181,7 @@ plt.suptitle("Mapas de activación (patrón de prueba)")
 plt.show()
 
 # ======================================
-# 8. CLASIFICACIÓN FINAL (prueba)
+# 8. CLASIFICACIÓN FINAL 
 # ======================================
 
 print("\nRESULTADOS DE CLASIFICACIÓN (TEST)\n")
@@ -194,11 +194,11 @@ for i in range(10):  # muestra 10 ejemplos
           "Salida:", y_pred)
 
 # ======================================
-# 9. INCISO C: DIBUJO CONTINUO EN 32x32 -> REDUCCIÓN A 8x8 Y CLASIFICACIÓN
+# 9. ingresar el usuario nuevas características
 # ======================================
-# El usuario dibuja en una cuadrícula 32x32.
-# Internamente se reduce a 8x8 (promedio por bloques 4x4),
-# se normaliza igual que el dataset Digits y se clasifica.
+# # El usuario dibuja en una cuadrícula 32x32.
+# # Internamente se reduce a 8x8 (promedio por bloques 4x4),
+# # se normaliza igual que el dataset Digits y se clasifica.
 
 N_draw = 32
 N_target = 8

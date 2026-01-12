@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # ======================================
-# 1. CREACIÓN DE PATRONES BASE (20x20)
+# 1. CREACIÓN DE PATRONES BASE 
 # ======================================
 
 N = 20  # tamaño 20x20
@@ -140,7 +140,7 @@ plt.show()
 
 
 # ======================================
-# 4. RED NEURONAL (3 CAPAS)
+# 4. RED NEURONAL 
 # ======================================
 
 eta = 0.25
