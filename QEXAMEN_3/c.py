@@ -196,7 +196,7 @@ for i in range(10):  # muestra 10 ejemplos
 # ======================================
 # 9. INCISO C: DIBUJO CONTINUO EN 32x32 -> REDUCCIÓN A 8x8 Y CLASIFICACIÓN
 # ======================================
-# El usuario dibuja en una cuadrícula 32x32 (más cómoda).
+# El usuario dibuja en una cuadrícula 32x32.
 # Internamente se reduce a 8x8 (promedio por bloques 4x4),
 # se normaliza igual que el dataset Digits y se clasifica.
 
@@ -319,7 +319,7 @@ def on_key(event):
         )
         actualizar()
 
-        # (Opcional) mostrar lo que realmente entra a la red (8x8)
+        # Mostrar lo que realmente entra a la red (8x8)
         plt.figure(figsize=(3, 3))
         plt.imshow(g8, cmap="gray", interpolation="nearest", resample=False)
         plt.title("Entrada real a la red (8x8)")
